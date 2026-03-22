@@ -1,0 +1,8 @@
+# Dossier de build Rust
+/target/
+
+# Fichiers de backup Rustfmt
+**/*.rs.bk
+
+# Variables d'environnement locales
+.env

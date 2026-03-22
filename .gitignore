@@ -1,0 +1,11 @@
+# Environnement local et secrets
+.env
+.env.*.local
+
+# Fichiers systèmes et éditeurs
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
