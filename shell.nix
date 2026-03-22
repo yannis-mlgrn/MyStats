@@ -21,12 +21,18 @@ pkgs.mkShell {
 
     # Command Runner
     just
+
+    # DevSecOps
+    pre-commit
+    gitleaks
+    cargo-audit
+    cargo-deny
   ];
 
   shellHook = ''
     # Permet au compilateur Rust de trouver OpenSSL via pkg-config
     export PKG_CONFIG_PATH="${pkgs.openssl.dev}/lib/pkgconfig"
-    
+
     echo "==========================================="
     echo "🚀 Bienvenue dans le Shell Nix de MyStats !"
     echo "==========================================="
@@ -36,5 +42,10 @@ pkgs.mkShell {
     echo " - SQLx    : install"
     echo " - Runner  : $(just --version | head -n 1)"
     echo "==========================================="
+
+    # Installe automatiquement les hooks pre-commit pour le repository local
+    pre-commit install > /dev/null 2>&1
+
+    just --list
   '';
 }

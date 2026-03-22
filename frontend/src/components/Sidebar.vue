@@ -18,10 +18,10 @@ const menuItems = [
       </div>
       <span class="logo-text">My Stats</span>
     </div>
-    
+
     <nav class="sidebar-nav">
-      <div 
-        v-for="item in menuItems" 
+      <div
+        v-for="item in menuItems"
         :key="item.name"
         class="nav-item"
         :class="{ active: item.active }"

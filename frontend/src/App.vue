@@ -37,14 +37,14 @@ onMounted(() => {
       <TopNav />
 
       <div class="dashboard-center">
-        
+
         <div v-if="loading" class="loading-state">Chargement...</div>
         <div v-else-if="error" class="error-state">{{ error }}</div>
-        
+
         <div v-else class="center-wrapper">
           <WeeklyStatsCard :stats="stats" />
         </div>
-        
+
       </div>
     </main>
   </div>

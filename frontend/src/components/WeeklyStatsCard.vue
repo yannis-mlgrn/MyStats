@@ -12,7 +12,7 @@ defineProps({
     <div class="card-header">
       <h3>Kilomètres de la semaine</h3>
     </div>
-    
+
     <div class="streaks-body">
       <div class="streak-block">
         <div class="streak-line brand"></div>
@@ -32,7 +32,7 @@ defineProps({
         <div class="streak-label">natation (km)</div>
       </div>
     </div>
-    
+
     <div class="streaks-footer">
       Données récupérées depuis l'API locale
     </div>
