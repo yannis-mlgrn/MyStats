@@ -18,6 +18,7 @@ jobs:
         uses: cachix/install-nix-action@v25
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Setup Nix cache
         uses: cachix/cachix-action@v14
@@ -43,6 +44,7 @@ jobs:
         uses: cachix/install-nix-action@v25
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Build Backend (Rust)
         run: nix-shell --run "cd backend && cargo build --release"
