@@ -27,6 +27,9 @@ jobs:
           skipPush: true
         continue-on-error: true
 
+      - name: Installer les dépendances du Frontend
+        run: nix-shell --run "cd frontend && npm ci ""
+
       - name: Run code formatting, syntax, and GitLeaks (pre-commit)
         run: nix-shell --run "pre-commit run --all-files"
 
