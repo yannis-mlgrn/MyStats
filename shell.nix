@@ -25,6 +25,7 @@ pkgs.mkShell {
     # DevSecOps
     pre-commit
     gitleaks
+    eslint
     cargo-audit
     cargo-deny
   ];
