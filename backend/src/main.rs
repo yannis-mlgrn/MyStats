@@ -1,26 +1,15 @@
-use axum::{
-    routing::get,
-    Router,
-    Json,
-    extract::State,
-};
-use serde::Serialize;
-use sqlx::{postgres::PgPoolOptions, PgPool};
+use axum::{Router, routing::get};
+use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
-use tower_http::cors::{Any, CorsLayer};
 use std::sync::Arc;
-use chrono::{Datelike, Utc};
+use tower_http::cors::{Any, CorsLayer};
 
-#[derive(Serialize)]
-struct WeeklyStats {
-    running_km: f64,
-    cycling_km: f64,
-    swimming_m: f64,
-}
+mod models;
+mod handlers;
+mod services;
 
-#[allow(dead_code)]
-struct AppState {
-    db: PgPool,
+pub struct AppState {
+    pub db: sqlx::PgPool,
 }
 
 #[tokio::main]
@@ -35,7 +24,10 @@ async fn main() {
         .expect("Failed to connect to database");
 
     // Run migrations
-    sqlx::migrate!("./migrations").run(&pool).await.expect("Failed to run migrations");
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("Failed to run migrations");
 
     let shared_state = Arc::new(AppState { db: pool });
 
@@ -45,7 +37,10 @@ async fn main() {
         .allow_headers(Any);
 
     let app = Router::new()
-        .route("/api/stats/weekly", get(get_weekly_stats))
+        .route("/api/stats/weekly", get(handlers::get_weekly_stats))
+        .route("/api/stats/history", get(handlers::get_weekly_history))
+        .route("/api/stats/sleep", get(handlers::get_sleep_stats))
+        .route("/api/stats/step-goal", axum::routing::post(handlers::update_step_goal))
         .with_state(shared_state)
         .layer(cors);
 
@@ -54,17 +49,4 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn get_weekly_stats(State(_state): State<Arc<AppState>>) -> Json<WeeklyStats> {
-    let now = Utc::now();
-    let _year = now.year();
-    let _week = now.iso_week().week() as i32;
-
-    // TODO: fetch real garmin data and insert into db
-    Json(WeeklyStats {
-        running_km: 42.1,
-        cycling_km: 154.2,
-        swimming_m: 3200.0,
-    })
 }

@@ -12,3 +12,4 @@
 
 # MyStats specific
 .pgdata/
+backend/.garmin_session.json

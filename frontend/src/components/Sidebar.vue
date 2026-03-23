@@ -13,7 +13,7 @@ const menuItems = [
     <div class="sidebar-header">
       <div class="logo-icon">
         <svg viewBox="0 0 24 24" fill="var(--color-brand)" width="28" height="28">
-          <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z"/>
+          <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
         </svg>
       </div>
       <span class="logo-text">My Stats</span>

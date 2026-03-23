@@ -1,8 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import Sidebar from './components/Sidebar.vue'
-import TopNav from './components/TopNav.vue'
 import WeeklyStatsCard from './components/WeeklyStatsCard.vue'
+import HistoricalChart from './components/HistoricalChart.vue'
+import SleepChart from './components/SleepChart.vue'
+import ActivityGauges from './components/ActivityGauges.vue'
 
 const stats = ref({
   running_km: 0,
@@ -34,34 +36,51 @@ onMounted(() => {
     <Sidebar />
 
     <main class="main-content">
-      <TopNav />
-
-      <div class="dashboard-center">
-
-        <div v-if="loading" class="loading-state">Chargement...</div>
+      <div class="dashboard-wrapper">
+        <div v-if="loading" class="loading-state">
+          <div class="loader"></div>
+          Chargement de vos performances...
+        </div>
         <div v-else-if="error" class="error-state">{{ error }}</div>
 
-        <div v-else class="center-wrapper">
-          <WeeklyStatsCard :stats="stats" />
-        </div>
+        <div v-else class="dashboard-content">
+          <!-- TOP ROW: Activity Stats & History -->
+          <div class="dashboard-row top-row">
+            <div class="row-item stats-item">
+              <WeeklyStatsCard :stats="stats" />
+            </div>
+            <div class="row-item history-item">
+              <HistoricalChart />
+            </div>
+          </div>
 
+          <!-- BOTTOM ROW: Sleep & Activity Rings -->
+          <div class="dashboard-row bottom-row">
+            <div class="row-item sleep-item">
+              <SleepChart />
+            </div>
+            <div class="row-item rings-item">
+              <ActivityGauges />
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg-app: #f4f5f7;
+  --bg-app: #f8fafc;
   --bg-card: #ffffff;
   --bg-sidebar: #ffffff;
-  --text-main: #111827;
-  --text-muted: #6b7280;
-  --border-light: #e5e7eb;
-  --color-brand: #2563eb; /* Blue DA */
-  --sidebar-width: 250px;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-light: #f1f5f9;
+  --color-brand: #3b82f6;
+  --sidebar-width: 260px;
 }
 
 * {
@@ -70,16 +89,17 @@ onMounted(() => {
   padding: 0;
 }
 
-body, html, #app {
-  font-family: 'Inter', sans-serif;
+body,
+html,
+#app {
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: var(--text-main);
   background-color: var(--bg-app);
   margin: 0;
   padding: 0 !important;
   width: 100%;
   height: 100%;
-  max-width: none !important;
-  display: block !important;
+  display: block;
   overflow: hidden;
 }
 
@@ -93,33 +113,85 @@ body, html, #app {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-
-/* CENTER DASHBOARD */
-.dashboard-center {
-  flex: 1;
-  display: flex;
-  align-items: flex-start; /* Centré vers le haut */
-  justify-content: center;
-  padding: 2rem 2rem 2rem 2rem; /* Reduced top margin to standard 2rem */
   overflow-y: auto;
+  padding: 2rem;
 }
 
-.loading-state, .error-state {
-  text-align: center;
-  font-size: 1.1rem;
-  color: var(--text-muted);
-}
-
-.center-wrapper {
+.dashboard-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
   width: 100%;
-  max-width: 800px;
-  animation: fadeIn 0.5s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.top-row .row-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.bottom-row .sleep-item {
+  flex: 7; /* 70% */
+}
+
+.bottom-row .rings-item {
+  flex: 3; /* 30% */
+}
+
+@media (max-width: 1200px) {
+  .bottom-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 1100px) {
+  .top-row {
+    flex-direction: column;
+  }
+}
+
+/* LOADER & STATES */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10rem 0;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: var(--color-brand);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.error-state {
+  padding: 2rem;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+  color: #991b1b;
+  text-align: center;
 }
 </style>

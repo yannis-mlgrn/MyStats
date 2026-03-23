@@ -6,3 +6,4 @@
 
 # Variables d'environnement locales
 .env
+.garmin_session.json

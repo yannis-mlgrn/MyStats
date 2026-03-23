@@ -1,7 +1,7 @@
 <template>
   <header class="top-nav">
     <div class="top-icons">
-      <div class="profile-pic"></div>
+      <!-- <div class="profile-pic"></div> -->
     </div>
   </header>
 </template>
@@ -22,7 +22,8 @@
   align-items: center;
 }
 
-.profile-pic {
+/* TODO: Add multi account connection */
+/* .profile-pic {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -31,5 +32,5 @@
   background-size: cover;
   border: 2px solid white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
+} */
 </style>

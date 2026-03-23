@@ -33,6 +33,8 @@ pkgs.mkShell {
   shellHook = ''
     # Permet au compilateur Rust de trouver OpenSSL via pkg-config
     export PKG_CONFIG_PATH="${pkgs.openssl.dev}/lib/pkgconfig"
+    # Permet à l'exécutable compilé de trouver libssl.so au runtime
+    export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.openssl ]}:$LD_LIBRARY_PATH"
 
     echo "==========================================="
     echo "🚀 Bienvenue dans le Shell Nix de MyStats !"
