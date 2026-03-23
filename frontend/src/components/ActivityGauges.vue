@@ -47,7 +47,7 @@ const gauges = computed(() => {
 
 const fetchData = async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/stats/sleep')
+    const res = await fetch('/api/stats/sleep')
     const data = await res.json()
     rawData.value = data
     if (latestDay.value) {
@@ -63,7 +63,7 @@ const fetchData = async () => {
 const updateGoal = async () => {
   if (!latestDay.value) return
   try {
-    const res = await fetch('http://localhost:3000/api/stats/step-goal', {
+    const res = await fetch('/api/stats/step-goal', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -90,7 +90,7 @@ const getGaugePath = (value, min, max) => {
   const centerX = 50
   const centerY = 50
   const startAngle = -180
-  const endAngle = startAngle + (percent * 180)
+  const endAngle = startAngle + percent * 180
 
   const startRad = (startAngle * Math.PI) / 180
   const endRad = (endAngle * Math.PI) / 180
@@ -118,10 +118,7 @@ onMounted(fetchData)
         <div class="gauge-item">
           <div class="gauge-visual">
             <svg viewBox="0 0 100 60" class="gauge-svg">
-              <path
-                d="M 10 50 A 40 40 0 0 1 90 50"
-                class="gauge-bg"
-              />
+              <path d="M 10 50 A 40 40 0 0 1 90 50" class="gauge-bg" />
               <path
                 :d="getGaugePath(gauge.value, gauge.min, gauge.max)"
                 class="gauge-fill"
@@ -129,14 +126,20 @@ onMounted(fetchData)
               />
             </svg>
             <div class="gauge-center">
-              <span class="center-value">{{ gauge.value ? gauge.value.toLocaleString() : '--' }}</span>
+              <span class="center-value">{{
+                gauge.value ? gauge.value.toLocaleString() : '--'
+              }}</span>
               <span class="center-unit">{{ gauge.unit }}</span>
             </div>
           </div>
           <div class="gauge-info">
             <div class="label-row">
               <span class="gauge-label">{{ gauge.label }}</span>
-              <button v-if="gauge.id === 'steps'" class="edit-btn" @click="isEditingGoal = !isEditingGoal">
+              <button
+                v-if="gauge.id === 'steps'"
+                class="edit-btn"
+                @click="isEditingGoal = !isEditingGoal"
+              >
                 <span v-if="!isEditingGoal">⚙️</span>
                 <span v-else>✖</span>
               </button>
@@ -163,9 +166,7 @@ onMounted(fetchData)
       </div>
     </div>
 
-    <div v-else-if="loading" class="loading-state">
-      Analyse des indicateurs...
-    </div>
+    <div v-else-if="loading" class="loading-state">Analyse des indicateurs...</div>
   </div>
 </template>
 
@@ -206,6 +207,7 @@ onMounted(fetchData)
   display: flex;
   flex-direction: column;
   justify-content: center; /* Vertical alignment */
+  align-items: center; /* Horizontal alignment */
   flex-grow: 1;
   gap: 1rem;
 }
@@ -214,19 +216,23 @@ onMounted(fetchData)
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 }
 
 .gauge-item {
   display: flex;
   align-items: center;
+  justify-content: center; /* Center content in the item */
   gap: 2rem;
   padding: 0.5rem 0;
+  width: 100%;
 }
 
 .gauge-visual {
-  width: 140px; /* Increased size */
+  width: 140px;
   height: 85px;
   position: relative;
+  flex-shrink: 0;
 }
 
 .gauge-svg {
@@ -236,16 +242,17 @@ onMounted(fetchData)
 
 .gauge-bg {
   fill: none;
-  stroke: #f1f5f9;
-  stroke-width: 10;
+  stroke: #cbd5e1; /* More visible grey */
+  stroke-width: 10; /* Match fill width */
   stroke-linecap: round;
 }
 
 .gauge-fill {
   fill: none;
-  stroke-width: 10;
+  stroke-width: 10; /* Thicker for the value */
   stroke-linecap: round;
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .gauge-center {
@@ -259,16 +266,16 @@ onMounted(fetchData)
 }
 
 .center-value {
-  font-size: 1.25rem; /* Larger text */
-  font-weight: 800;
-  color: #1e293b;
+  font-size: 1.5rem; /* Larger */
+  font-weight: 900;
+  color: #0f172a;
   line-height: 1;
 }
 
 .center-unit {
-  font-size: 0.65rem;
-  color: #94a3b8;
-  font-weight: 700;
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 800;
   text-transform: uppercase;
   margin-top: 2px;
 }
@@ -277,7 +284,8 @@ onMounted(fetchData)
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.25rem;
+  max-width: 150px;
 }
 
 .label-row {
@@ -287,30 +295,49 @@ onMounted(fetchData)
 }
 
 .gauge-label {
-  font-size: 1.1rem; /* Larger labels */
-  font-weight: 800;
-  color: #334155;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #1e293b;
 }
 
 .gauge-desc {
   font-size: 0.8rem;
-  color: #64748b;
-  font-weight: 500;
+  color: #475569;
+  font-weight: 700;
 }
 
 .divider {
   height: 1px;
   background: #f1f5f9;
-  margin: 0.5rem 0;
-  width: 80%;
+  margin: 0.25rem 0;
+  width: 60%;
   align-self: center;
+}
+
+@media (max-width: 480px) {
+  .gauge-item {
+    gap: 1rem;
+  }
+
+  .gauge-visual {
+    width: 110px;
+    height: 70px;
+  }
+
+  .center-value {
+    font-size: 1rem;
+  }
+
+  .gauge-label {
+    font-size: 0.9rem;
+  }
 }
 
 .edit-btn {
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
   opacity: 0.5;
   transition: opacity 0.2s;
   padding: 4px;
@@ -327,11 +354,11 @@ onMounted(fetchData)
 }
 
 .goal-input {
-  width: 100px;
-  font-size: 0.85rem;
-  padding: 6px 10px;
+  width: 80px;
+  font-size: 0.8rem;
+  padding: 4px 8px;
   border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 700;
   color: #1e293b;
   outline: none;
@@ -345,9 +372,9 @@ onMounted(fetchData)
   background: #f59e0b;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 0.8rem;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.1s;

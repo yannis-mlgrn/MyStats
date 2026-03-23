@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO daily_sleep (date, total_sleep_seconds, deep_sleep_seconds, light_sleep_seconds, rem_sleep_seconds, awake_seconds, quality_score, steps, active_calories, resting_heart_rate)\n            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n            ON CONFLICT (date) DO UPDATE SET\n                total_sleep_seconds = CASE WHEN EXCLUDED.total_sleep_seconds > 0 THEN EXCLUDED.total_sleep_seconds ELSE daily_sleep.total_sleep_seconds END,\n                deep_sleep_seconds = CASE WHEN EXCLUDED.deep_sleep_seconds > 0 THEN EXCLUDED.deep_sleep_seconds ELSE daily_sleep.deep_sleep_seconds END,\n                light_sleep_seconds = CASE WHEN EXCLUDED.light_sleep_seconds > 0 THEN EXCLUDED.light_sleep_seconds ELSE daily_sleep.light_sleep_seconds END,\n                rem_sleep_seconds = CASE WHEN EXCLUDED.rem_sleep_seconds > 0 THEN EXCLUDED.rem_sleep_seconds ELSE daily_sleep.rem_sleep_seconds END,\n                awake_seconds = CASE WHEN EXCLUDED.awake_seconds > 0 THEN EXCLUDED.awake_seconds ELSE daily_sleep.awake_seconds END,\n                quality_score = CASE WHEN EXCLUDED.quality_score > 0 THEN EXCLUDED.quality_score ELSE daily_sleep.quality_score END,\n                steps = EXCLUDED.steps,\n                active_calories = EXCLUDED.active_calories,\n                resting_heart_rate = COALESCE(EXCLUDED.resting_heart_rate, daily_sleep.resting_heart_rate)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Date",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "9c4b2c45421faab98cd52db5da8d4773aaea8395c3b6adf52af0ab1bf2c9c7b6"
+}

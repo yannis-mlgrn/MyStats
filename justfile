@@ -37,9 +37,13 @@ lint: lint-front lint-back
 lint-front:
 	cd frontend && npm run lint
 
-# Linter le Backend Rust
+# Linter le Backend Rust (Offline mode if .sqlx exists)
 lint-back:
-	cd backend && cargo clippy -- -D warnings
+	cd backend && SQLX_OFFLINE=true cargo clippy -- -D warnings
+
+# Préparer les métadonnées SQLx pour le linting offline
+prepare-back: db-start
+	cd backend && cargo sqlx prepare
 
 # Formater tout le code (Front & Back)
 format: format-front format-back

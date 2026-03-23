@@ -13,7 +13,16 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 const chartData = ref(null)
 const chartOptions = ref({
@@ -21,7 +30,7 @@ const chartOptions = ref({
   maintainAspectRatio: false,
   interaction: {
     mode: 'index',
-    intersect: false,
+    intersect: false
   },
   scales: {
     y: {
@@ -72,7 +81,7 @@ const loading = ref(true)
 
 const fetchHistory = async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/stats/history')
+    const res = await fetch('/api/stats/history')
     if (!res.ok) throw new Error('Network response was not ok')
     const data = await res.json()
 
@@ -89,21 +98,21 @@ const fetchHistory = async () => {
           borderColor: '#3b82f6',
           backgroundColor: 'rgba(59, 130, 246, 0.05)',
           fill: true,
-          data: cyclingData,
+          data: cyclingData
         },
         {
           label: 'Course',
           borderColor: '#f59e0b',
           backgroundColor: 'rgba(245, 158, 11, 0.05)',
           fill: true,
-          data: runningData,
+          data: runningData
         },
         {
           label: 'Natation',
           borderColor: '#06b6d4',
           backgroundColor: 'rgba(6, 182, 212, 0.05)',
           fill: true,
-          data: swimmingData,
+          data: swimmingData
         }
       ]
     }

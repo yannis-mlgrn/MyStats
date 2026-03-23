@@ -46,7 +46,7 @@ const formatDurationLong = (hours) => {
 // Stats computations
 const averageDuration = computed(() => {
   if (rawData.value.length === 0) return 0
-  const valid = rawData.value.filter(d => d.total_sleep_seconds > 0)
+  const valid = rawData.value.filter((d) => d.total_sleep_seconds > 0)
   if (valid.length === 0) return 0
   const sum = valid.reduce((acc, d) => acc + d.total_sleep_seconds, 0)
   return sum / valid.length / 3600
@@ -54,7 +54,7 @@ const averageDuration = computed(() => {
 
 const averageScore = computed(() => {
   if (rawData.value.length === 0) return 0
-  const valid = rawData.value.filter(d => d.quality_score > 0)
+  const valid = rawData.value.filter((d) => d.quality_score > 0)
   if (valid.length === 0) return 0
   const sum = valid.reduce((acc, d) => acc + d.quality_score, 0)
   return Math.round(sum / valid.length)
@@ -65,7 +65,7 @@ const chartOptions = computed(() => ({
   maintainAspectRatio: false,
   interaction: {
     mode: 'index',
-    intersect: false,
+    intersect: false
   },
   scales: {
     y: {
@@ -136,7 +136,7 @@ const chartData = computed(() => {
   if (rawData.value.length === 0) return null
 
   const sorted = [...rawData.value].reverse()
-  const labels = sorted.map(d => {
+  const labels = sorted.map((d) => {
     const date = new Date(d.date)
     return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
   })
@@ -148,7 +148,7 @@ const chartData = computed(() => {
       {
         label: 'Profond',
         backgroundColor: '#1e3a8a',
-        data: sorted.map(d => d.deep_sleep_seconds / 3600),
+        data: sorted.map((d) => d.deep_sleep_seconds / 3600),
         borderRadius: 4,
         order: 2,
         datalabels: { display: false }
@@ -156,21 +156,21 @@ const chartData = computed(() => {
       {
         label: 'Léger',
         backgroundColor: '#3b82f6',
-        data: sorted.map(d => d.light_sleep_seconds / 3600),
+        data: sorted.map((d) => d.light_sleep_seconds / 3600),
         order: 2,
         datalabels: { display: false }
       },
       {
         label: 'REM',
         backgroundColor: '#8b5cf6',
-        data: sorted.map(d => d.rem_sleep_seconds / 3600),
+        data: sorted.map((d) => d.rem_sleep_seconds / 3600),
         order: 2,
         datalabels: { display: false }
       },
       {
         label: 'Éveillé',
         backgroundColor: '#f87171',
-        data: sorted.map(d => d.awake_seconds / 3600),
+        data: sorted.map((d) => d.awake_seconds / 3600),
         order: 2,
         datalabels: { display: false }
       }
@@ -185,13 +185,13 @@ const chartData = computed(() => {
       pointRadius: 3,
       pointBackgroundColor: '#10b981',
       fill: false,
-      data: sorted.map(d => d.quality_score),
+      data: sorted.map((d) => d.quality_score),
       yAxisID: 'y1',
       order: 1,
       datalabels: { display: false }
     })
   } else {
-    const colors = sorted.map(d => {
+    const colors = sorted.map((d) => {
       if (d.quality_score >= 80) return '#10b981'
       if (d.quality_score >= 60) return '#f59e0b'
       return '#ef4444'
@@ -200,7 +200,7 @@ const chartData = computed(() => {
     datasets.push({
       label: 'Durée Totale',
       backgroundColor: colors,
-      data: sorted.map(d => d.total_sleep_seconds / 3600),
+      data: sorted.map((d) => d.total_sleep_seconds / 3600),
       borderRadius: 6,
       datalabels: { display: true }
     })
@@ -211,7 +211,7 @@ const chartData = computed(() => {
 
 const fetchSleepData = async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/stats/sleep')
+    const res = await fetch('/api/stats/sleep')
     const data = await res.json()
     rawData.value = data
   } catch (e) {
@@ -247,7 +247,12 @@ onMounted(fetchSleepData)
     </div>
 
     <div class="chart-container">
-      <Bar v-if="chartData" :data="chartData" :options="chartOptions" :plugins="[ChartDataLabels]" />
+      <Bar
+        v-if="chartData"
+        :data="chartData"
+        :options="chartOptions"
+        :plugins="[ChartDataLabels]"
+      />
       <div v-else class="loading-placeholder">Chargement du sommeil...</div>
     </div>
 
@@ -261,11 +266,14 @@ onMounted(fetchSleepData)
         <div class="avg-item">
           <span class="avg-label">Score Moyen</span>
           <span
-class="avg-value" :class="{
-            'text-green': averageScore >= 80,
-            'text-orange': averageScore >= 60 && averageScore < 80,
-            'text-red': averageScore < 60
-          }">{{ averageScore }}/100</span>
+            class="avg-value"
+            :class="{
+              'text-green': averageScore >= 80,
+              'text-orange': averageScore >= 60 && averageScore < 80,
+              'text-red': averageScore < 60
+            }"
+            >{{ averageScore }}/100</span
+          >
         </div>
       </div>
 
@@ -361,7 +369,7 @@ class="avg-value" :class="{
   border-radius: 12px;
   padding: 0.75rem 1.25rem;
   gap: 1.5rem;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .avg-item {
@@ -389,9 +397,15 @@ class="avg-value" :class="{
   background: #e2e8f0;
 }
 
-.text-green { color: #10b981; }
-.text-orange { color: #f59e0b; }
-.text-red { color: #ef4444; }
+.text-green {
+  color: #10b981;
+}
+.text-orange {
+  color: #f59e0b;
+}
+.text-red {
+  color: #ef4444;
+}
 
 .chart-footer {
   display: flex;
@@ -413,9 +427,15 @@ class="avg-value" :class="{
   border-radius: 50%;
 }
 
-.dot.green { background: #10b981; }
-.dot.orange { background: #f59e0b; }
-.dot.red { background: #ef4444; }
+.dot.green {
+  background: #10b981;
+}
+.dot.orange {
+  background: #f59e0b;
+}
+.dot.red {
+  background: #ef4444;
+}
 
 .loading-placeholder {
   display: flex;
@@ -424,5 +444,24 @@ class="avg-value" :class="{
   height: 100%;
   color: #9ca3af;
   font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .banner-layout {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .averages-banner {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 </style>

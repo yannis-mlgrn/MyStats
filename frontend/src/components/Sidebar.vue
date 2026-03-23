@@ -1,4 +1,13 @@
 <script setup>
+defineProps({
+  isOpen: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['close'])
+
 const menuItems = [
   { name: 'Tableau de bord', icon: '📊', active: true },
   { name: 'Activités', icon: '📋' },
@@ -9,7 +18,7 @@ const menuItems = [
 </script>
 
 <template>
-  <aside class="sidebar">
+  <aside class="sidebar" :class="{ 'is-mobile-open': isOpen }">
     <div class="sidebar-header">
       <div class="logo-icon">
         <svg viewBox="0 0 24 24" fill="var(--color-brand)" width="28" height="28">
@@ -17,6 +26,7 @@ const menuItems = [
         </svg>
       </div>
       <span class="logo-text">My Stats</span>
+      <button class="close-mobile-btn" @click="emit('close')">✕</button>
     </div>
 
     <nav class="sidebar-nav">
@@ -25,6 +35,7 @@ const menuItems = [
         :key="item.name"
         class="nav-item"
         :class="{ active: item.active }"
+        @click="emit('close')"
       >
         <span class="nav-icon">{{ item.icon }}</span>
         <span class="nav-name">{{ item.name }}</span>
@@ -42,6 +53,8 @@ const menuItems = [
   flex-direction: column;
   flex-shrink: 0;
   height: 100%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
 }
 
 .sidebar-header {
@@ -51,6 +64,21 @@ const menuItems = [
   padding: 0 1.5rem;
   border-bottom: 1px solid var(--border-light, #e5e7eb);
   gap: 0.75rem;
+  position: relative;
+}
+
+.close-mobile-btn {
+  display: none;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
 }
 
 .logo-text {
@@ -93,5 +121,24 @@ const menuItems = [
   margin-right: 0.75rem;
   text-align: center;
   font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar.is-mobile-open {
+    transform: translateX(0);
+  }
+
+  .close-mobile-btn {
+    display: block;
+  }
 }
 </style>

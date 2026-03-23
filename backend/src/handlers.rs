@@ -1,9 +1,9 @@
-use axum::{Json, extract::State, response::IntoResponse, http::StatusCode};
+use crate::AppState;
+use crate::models::{DailySleep, WeeklyStats, WeeklyStatsHistory};
+use crate::services::garmin::{sync_garmin_data, sync_sleep_data};
+use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use chrono::{Datelike, Utc};
 use std::sync::Arc;
-use crate::models::{WeeklyStats, WeeklyStatsHistory, DailySleep};
-use crate::AppState;
-use crate::services::garmin::{sync_garmin_data, sync_sleep_data};
 
 pub async fn get_weekly_stats(State(state): State<Arc<AppState>>) -> Json<WeeklyStats> {
     // Sync missing data from garmin API
@@ -38,7 +38,9 @@ pub async fn get_weekly_stats(State(state): State<Arc<AppState>>) -> Json<Weekly
     }
 }
 
-pub async fn get_weekly_history(State(state): State<Arc<AppState>>) -> Json<Vec<WeeklyStatsHistory>> {
+pub async fn get_weekly_history(
+    State(state): State<Arc<AppState>>,
+) -> Json<Vec<WeeklyStatsHistory>> {
     let raw_stats = sqlx::query!(
         r#"
         SELECT year, week, running_km, cycling_km, swimming_m
@@ -51,19 +53,23 @@ pub async fn get_weekly_history(State(state): State<Arc<AppState>>) -> Json<Vec<
     .await
     .unwrap_or_default();
 
-    let mut stats: Vec<WeeklyStatsHistory> = raw_stats.into_iter().map(|row| {
-        let monday = chrono::NaiveDate::from_isoywd_opt(row.year, row.week as u32, chrono::Weekday::Mon)
-            .unwrap_or_else(|| chrono::NaiveDate::from_ymd_opt(row.year, 1, 1).unwrap());
+    let mut stats: Vec<WeeklyStatsHistory> = raw_stats
+        .into_iter()
+        .map(|row| {
+            let monday =
+                chrono::NaiveDate::from_isoywd_opt(row.year, row.week as u32, chrono::Weekday::Mon)
+                    .unwrap_or_else(|| chrono::NaiveDate::from_ymd_opt(row.year, 1, 1).unwrap());
 
-        WeeklyStatsHistory {
-            year: row.year,
-            week: row.week,
-            monday_date: monday.format("%d/%m").to_string(),
-            running_km: row.running_km,
-            cycling_km: row.cycling_km,
-            swimming_m: row.swimming_m,
-        }
-    }).collect();
+            WeeklyStatsHistory {
+                year: row.year,
+                week: row.week,
+                monday_date: monday.format("%d/%m").to_string(),
+                running_km: row.running_km,
+                cycling_km: row.cycling_km,
+                swimming_m: row.swimming_m,
+            }
+        })
+        .collect();
 
     // Reverse to get chronological order (oldest first)
     stats.reverse();

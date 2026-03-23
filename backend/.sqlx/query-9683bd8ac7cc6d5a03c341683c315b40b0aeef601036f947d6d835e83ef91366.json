@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE daily_sleep\n        SET step_goal = $1\n        WHERE date = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Date"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "9683bd8ac7cc6d5a03c341683c315b40b0aeef601036f947d6d835e83ef91366"
+}

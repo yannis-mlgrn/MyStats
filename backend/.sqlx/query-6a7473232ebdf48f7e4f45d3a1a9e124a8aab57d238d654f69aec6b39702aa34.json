@@ -1,0 +1,44 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT year, week, running_km, cycling_km, swimming_m\n        FROM weekly_stats\n        ORDER BY year DESC, week DESC\n        LIMIT 12\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "year",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "week",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "running_km",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 3,
+        "name": "cycling_km",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "swimming_m",
+        "type_info": "Float8"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "6a7473232ebdf48f7e4f45d3a1a9e124a8aab57d238d654f69aec6b39702aa34"
+}

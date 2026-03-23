@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
-use sqlx::{FromRow};
+use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
 
 #[derive(Serialize, FromRow)]
 pub struct WeeklyStats {

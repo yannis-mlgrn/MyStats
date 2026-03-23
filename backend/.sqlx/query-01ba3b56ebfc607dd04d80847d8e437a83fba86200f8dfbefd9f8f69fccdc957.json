@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                                INSERT INTO weekly_stats (year, week, running_km, cycling_km, swimming_m)\n                                VALUES ($1, $2, $3, $4, $5)\n                                ON CONFLICT (year, week) DO UPDATE SET\n                                    running_km = EXCLUDED.running_km,\n                                    cycling_km = EXCLUDED.cycling_km,\n                                    swimming_m = EXCLUDED.swimming_m\n                                ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Int4",
+        "Float8",
+        "Float8",
+        "Float8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "01ba3b56ebfc607dd04d80847d8e437a83fba86200f8dfbefd9f8f69fccdc957"
+}

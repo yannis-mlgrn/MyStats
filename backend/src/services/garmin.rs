@@ -1,6 +1,6 @@
 #![allow(clippy::collapsible_if)]
+use chrono::{Datelike, Duration, Utc};
 use sqlx::PgPool;
-use chrono::{Datelike, Utc, Duration};
 
 async fn get_garmin_token() -> Option<String> {
     let token_env = std::env::var("GARMIN_TOKEN").unwrap_or_default();
@@ -20,7 +20,9 @@ async fn get_garmin_token() -> Option<String> {
     if gc.login(&email, &password).await {
         if let Ok(session_data) = std::fs::read_to_string(".garmin_session.json") {
             if let Ok(session) = serde_json::from_str::<serde_json::Value>(&session_data) {
-                return session["token"].as_str().map(std::string::ToString::to_string);
+                return session["token"]
+                    .as_str()
+                    .map(std::string::ToString::to_string);
             }
         }
     }
@@ -45,7 +47,10 @@ pub async fn sync_sleep_data(pool: &PgPool) {
         let mut steps = 0;
         let calories = 0; // Defaulting for now
 
-        let summary_url = format!("https://connectapi.garmin.com/wellness-service/wellness/dailySummaryChart?date={}", date_str);
+        let summary_url = format!(
+            "https://connectapi.garmin.com/wellness-service/wellness/dailySummaryChart?date={}",
+            date_str
+        );
         if let Ok(sum_resp) = req_client.get(&summary_url)
             .header("Authorization", format!("Bearer {}", token))
             .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
@@ -72,7 +77,10 @@ pub async fn sync_sleep_data(pool: &PgPool) {
         let mut score = 0;
         let mut rhr: Option<i32> = None;
 
-        let sleep_url = format!("https://connectapi.garmin.com/wellness-service/wellness/dailySleepData?date={}", date_str);
+        let sleep_url = format!(
+            "https://connectapi.garmin.com/wellness-service/wellness/dailySleepData?date={}",
+            date_str
+        );
         if let Ok(resp) = req_client.get(&sleep_url)
             .header("Authorization", format!("Bearer {}", token))
             .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
@@ -147,18 +155,27 @@ pub async fn sync_garmin_data(pool: &PgPool) {
             if resp.status().is_success() {
                 if let Ok(activities) = resp.json::<serde_json::Value>().await {
                     if let Some(arr) = activities.as_array() {
-                        let mut weekly_aggregation: std::collections::HashMap<(i32, u32), (f64, f64, f64)> = std::collections::HashMap::new();
+                        let mut weekly_aggregation: std::collections::HashMap<
+                            (i32, u32),
+                            (f64, f64, f64),
+                        > = std::collections::HashMap::new();
 
                         for act in arr {
                             if let Some(time_str) = act["startTimeLocal"].as_str() {
-                                if let Ok(dt) = chrono::NaiveDateTime::parse_from_str(time_str, "%Y-%m-%d %H:%M:%S") {
+                                if let Ok(dt) = chrono::NaiveDateTime::parse_from_str(
+                                    time_str,
+                                    "%Y-%m-%d %H:%M:%S",
+                                ) {
                                     let year = dt.iso_week().year();
                                     let week = dt.iso_week().week();
 
                                     let distance = act["distance"].as_f64().unwrap_or(0.0);
-                                    let type_key = act["activityType"]["typeKey"].as_str().unwrap_or("");
+                                    let type_key =
+                                        act["activityType"]["typeKey"].as_str().unwrap_or("");
 
-                                    let entry = weekly_aggregation.entry((year, week)).or_insert((0.0, 0.0, 0.0));
+                                    let entry = weekly_aggregation
+                                        .entry((year, week))
+                                        .or_insert((0.0, 0.0, 0.0));
 
                                     if type_key.contains("running") {
                                         entry.0 += distance;
@@ -192,7 +209,7 @@ pub async fn sync_garmin_data(pool: &PgPool) {
                     }
                 }
             }
-        },
+        }
         Err(e) => println!("Request error to Garmin API: {}", e),
     }
 }

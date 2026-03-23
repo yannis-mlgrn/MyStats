@@ -1,0 +1,80 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT date, total_sleep_seconds, deep_sleep_seconds, light_sleep_seconds, rem_sleep_seconds, awake_seconds, quality_score,\n               COALESCE(steps, 0) as \"steps!\", COALESCE(active_calories, 0) as \"active_calories!\",\n               resting_heart_rate, COALESCE(step_goal, 10000) as \"step_goal!\"\n        FROM daily_sleep\n        ORDER BY date DESC\n        LIMIT 7\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "date",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 1,
+        "name": "total_sleep_seconds",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "deep_sleep_seconds",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "light_sleep_seconds",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "rem_sleep_seconds",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "awake_seconds",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "quality_score",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 7,
+        "name": "steps!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "active_calories!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 9,
+        "name": "resting_heart_rate",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 10,
+        "name": "step_goal!",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      null,
+      true,
+      null
+    ]
+  },
+  "hash": "d6bd57b005b1f42a097d62db8b2243526442fa64f58bd0e27c7b91e7b1e56550"
+}

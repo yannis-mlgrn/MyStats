@@ -4,8 +4,8 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
 
-mod models;
 mod handlers;
+mod models;
 mod services;
 
 pub struct AppState {
@@ -40,11 +40,14 @@ async fn main() {
         .route("/api/stats/weekly", get(handlers::get_weekly_stats))
         .route("/api/stats/history", get(handlers::get_weekly_history))
         .route("/api/stats/sleep", get(handlers::get_sleep_stats))
-        .route("/api/stats/step-goal", axum::routing::post(handlers::update_step_goal))
+        .route(
+            "/api/stats/step-goal",
+            axum::routing::post(handlers::update_step_goal),
+        )
         .with_state(shared_state)
         .layer(cors);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     println!("Server running at http://{addr}");
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();

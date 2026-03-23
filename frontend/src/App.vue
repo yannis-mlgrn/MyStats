@@ -13,10 +13,11 @@ const stats = ref({
 })
 const loading = ref(true)
 const error = ref(null)
+const isSidebarOpen = ref(false)
 
 const fetchStats = async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/stats/weekly')
+    const res = await fetch('/api/stats/weekly')
     if (!res.ok) throw new Error('Erreur de chargement des stats')
     stats.value = await res.json()
   } catch (e) {
@@ -26,14 +27,35 @@ const fetchStats = async () => {
   }
 }
 
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
 onMounted(() => {
   fetchStats()
 })
 </script>
 
 <template>
-  <div class="app-container">
-    <Sidebar />
+  <div class="app-container" :class="{ 'sidebar-open': isSidebarOpen }">
+    <!-- MOBILE TOP BAR -->
+    <header class="mobile-header">
+      <button class="menu-toggle" @click="toggleSidebar">
+        <span class="hamburger"></span>
+      </button>
+      <div class="mobile-logo">
+        <svg viewBox="0 0 24 24" fill="var(--color-brand)" width="24" height="24">
+          <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
+        </svg>
+        <span>My Stats</span>
+      </div>
+      <div class="header-spacer"></div>
+    </header>
+
+    <!-- OVERLAY FOR MOBILE SIDEBAR -->
+    <div class="sidebar-overlay" @click="isSidebarOpen = false"></div>
+
+    <Sidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />
 
     <main class="main-content">
       <div class="dashboard-wrapper">
@@ -107,6 +129,70 @@ html,
   display: flex;
   height: 100vh;
   width: 100%;
+  position: relative;
+}
+
+/* MOBILE HEADER */
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: white;
+  z-index: 100;
+  padding: 0 1rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.mobile-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.menu-toggle {
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.hamburger {
+  width: 20px;
+  height: 2px;
+  background: var(--text-main);
+  position: relative;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: var(--text-main);
+  left: 0;
+}
+
+.hamburger::before {
+  top: -6px;
+}
+.hamburger::after {
+  bottom: -6px;
+}
+
+.header-spacer {
+  width: 40px;
 }
 
 .main-content {
@@ -115,6 +201,7 @@ html,
   flex-direction: column;
   overflow-y: auto;
   padding: 2rem;
+  transition: all 0.3s ease;
 }
 
 .dashboard-wrapper {
@@ -148,15 +235,47 @@ html,
   flex: 3; /* 30% */
 }
 
+/* RESPONSIVE BREAKPOINTS */
 @media (max-width: 1200px) {
   .bottom-row {
     flex-direction: column;
+  }
+  .bottom-row .sleep-item,
+  .bottom-row .rings-item {
+    flex: none;
+    width: 100%;
   }
 }
 
 @media (max-width: 1100px) {
   .top-row {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-header {
+    display: flex;
+  }
+
+  .main-content {
+    padding: 75px 1rem 1.5rem 1rem;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 95;
+    backdrop-filter: blur(2px);
+  }
+
+  .sidebar-open .sidebar-overlay {
+    display: block;
   }
 }
 
@@ -180,10 +299,20 @@ html,
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .error-state {

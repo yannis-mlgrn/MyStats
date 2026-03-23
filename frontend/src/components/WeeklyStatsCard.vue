@@ -45,6 +45,8 @@ defineProps({
   width: 100%;
   height: 100%;
   transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-card:hover {
@@ -69,51 +71,88 @@ defineProps({
 .streaks-body {
   display: flex;
   gap: 1rem;
-  height: calc(100% - 3rem);
+  flex: 1; /* Take remaining height */
+  min-height: 0;
 }
 
 .streak-block {
   text-align: center;
   flex: 1;
   padding: 1.5rem 0.75rem;
-  border-radius: 12px;
-  background: #fff;
-  border: 1px solid #f9fafb;
+  border-radius: 16px; /* Slightly more rounded */
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
 }
 
-.course-bg { background-color: #fffaf0; }
-.velo-bg { background-color: #f0f7ff; }
-.natation-bg { background-color: #f0fdff; }
+.streak-block:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.course-bg {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+.velo-bg {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+.natation-bg {
+  background-color: rgba(6, 182, 212, 0.1);
+  border-color: rgba(6, 182, 212, 0.2);
+}
 
 .streak-line {
-  height: 4px;
+  height: 6px;
   margin-bottom: 1rem;
-  width: 40px;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 2px;
+  width: 32px;
+  border-radius: 3px;
 }
 
-.streak-line.course { background: #f59e0b; }
-.streak-line.velo { background: #3b82f6; }
-.streak-line.natation { background: #06b6d4; }
+.streak-line.course {
+  background: #f59e0b;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+.streak-line.velo {
+  background: #3b82f6;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+.streak-line.natation {
+  background: #06b6d4;
+  box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2);
+}
 
 .streak-val {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #1f2937;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #0f172a;
   line-height: 1;
   margin-bottom: 0.5rem;
 }
 
 .streak-label {
-  font-size: 0.7rem;
-  color: #6b7280;
-  font-weight: 700;
+  font-size: 0.75rem;
+  color: #475569;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+@media (max-width: 640px) {
+  .streaks-body {
+    flex-direction: column;
+  }
+
+  .streak-block {
+    padding: 1rem;
+  }
+
+  .streak-val {
+    font-size: 1.8rem;
+  }
 }
 </style>
